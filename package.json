@@ -1,0 +1,16 @@
+{
+  "name": "prince_of_persia",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "A Windows 3.1 visual simulator",
+  "devDependencies": {
+    "electron": "^35.2.0"
+  }
+}

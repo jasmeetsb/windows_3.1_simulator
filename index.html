@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 3.1 Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="splash-screen">
+        <img src="graphics/win31_start.png" alt="Windows 3.1 Startup">
+    </div>
+    <div id="desktop">
+        <!-- Windows will be added here -->
+        <div class="window" id="welcome-window">
+            <div class="title-bar">
+                <span class="title">Welcome</span>
+                <div class="title-bar-controls">
+                    <button class="minimize" title="Minimize">_</button>
+                    <button class="maximize" title="Maximize">□</button>
+                    <button class="close" title="Close">X</button>
+                </div>
+            </div>
+            <div class="window-body">
+                <p>Welcome to the Windows 3.1 Simulator!</p>
+                <p>This is a basic visual replica.</p>
+                <div class="button-container">
+                     <button class="win31-button">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Placeholder Desktop Icons -->
+        <!-- Removed Desktop Icons -->
+
+        <div class="desktop-icon" id="solitaire-icon" data-app-name="Solitaire" data-app-icon="icons/solitaire.png">
+            <img src="icons/solitaire.png" alt="Solitaire">
+            <span>Solitaire</span>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,657 @@
+body {
+    margin: 0;
+    overflow: hidden; /* Prevent scrollbars */
+    /* Use a font stack that includes common Win 3.1 fonts or good fallbacks */
+    font-family: "MS Sans Serif", "Tahoma", Geneva, sans-serif; 
+    font-size: 12px;
+    /* Attempt to force crisp edges, might not work everywhere */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+#splash-screen {
+    position: fixed; /* Cover the entire viewport */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #008080; /* Teal background like Win 3.1 */
+    display: flex; /* Center the image */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top */
+    cursor: pointer; /* Indicate it's clickable */
+}
+
+#splash-screen img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Scale image nicely */
+}
+
+/* Initially, the desktop might be hidden or just behind the splash */
+#desktop {
+    background-color: #008080; /* Teal background */
+    width: 100vw;
+    height: 100vh;
+    position: relative; 
+    z-index: 1; /* Lower z-index than splash */
+    /* Add a container for minimized icons */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Container for minimized icons at the bottom */
+#minimized-area {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    z-index: 5; /* Below windows */
+}
+
+.minimized-icon {
+    width: 60px;
+    text-align: center;
+    color: white;
+    cursor: default;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.minimized-icon .icon-image {
+    width: 32px;
+    height: 32px;
+    /* Use icon-image styles */
+}
+
+.minimized-icon span {
+    background-color: transparent; /* Text background matches desktop */
+    color: white;
+    font-size: 11px;
+    padding: 1px 3px;
+}
+
+.window {
+    position: absolute;
+    /* Beveled border effect */
+    border-top: 1px solid #ffffff; /* White top */
+    border-left: 1px solid #ffffff; /* White left */
+    border-bottom: 1px solid #000000; /* Black bottom */
+    border-right: 1px solid #000000; /* Black right */
+    background-color: #c0c0c0; /* Light grey background */
+    box-shadow: none; /* Remove previous shadow */
+    padding: 1px; /* Space for inner bevel */
+    min-width: 150px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    top: 50px;
+    left: 50px;
+    /* Add inner bevel */
+    outline: 1px solid #808080; /* Dark grey inner */
+}
+
+.title-bar {
+    background-color: #000080; /* Dark blue title bar */
+    color: white;
+    padding: 2px 3px; /* Adjusted padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: default; 
+    height: 18px; /* Approximate height */
+    margin-bottom: 1px; /* Space before menu bar */
+}
+
+.title {
+    font-weight: bold;
+    flex-grow: 1; /* Allow title to take space */
+    text-align: center; /* Center title text */
+    padding-left: 20px; /* Make space for system menu button */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.title-bar-controls {
+    display: flex;
+    align-items: center;
+}
+
+/* System Menu Button (Left) */
+.system-menu-button {
+    background-color: #c0c0c0;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid #000000;
+    border-right: 1px solid #000000;
+    color: black;
+    font-family: "System", sans-serif; 
+    font-size: 10px;
+    width: 16px;
+    height: 14px;
+    line-height: 12px; /* Adjust for content */
+    padding: 0;
+    margin-right: 3px; /* Space between sys menu and title */
+    cursor: default;
+    text-align: center;
+    position: absolute; /* Position relative to title bar */
+    left: 3px;
+    top: 2px;
+}
+
+.system-menu-button:active {
+    border-top-color: #000000;
+    border-left-color: #000000;
+    border-bottom-color: #ffffff;
+    border-right-color: #ffffff;
+    background-color: #e0e0e0;
+}
+
+/* Window Control Buttons (Right) */
+.title-bar-controls button {
+    background-color: #c0c0c0;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid #000000;
+    border-right: 1px solid #000000;
+    color: black;
+    font-family: "Marlett", "System", sans-serif; /* Marlett font often used for symbols */
+    font-size: 10px;
+    width: 16px;
+    height: 14px;
+    line-height: 14px; /* Center symbol vertically */
+    padding: 0;
+    margin-left: 2px;
+    cursor: default;
+    text-align: center;
+}
+
+.title-bar-controls button:active {
+    border-top-color: #000000;
+    border-left-color: #000000;
+    border-bottom-color: #ffffff;
+    border-right-color: #ffffff;
+    background-color: #e0e0e0;
+}
+
+.window-body {
+    padding: 0; /* Remove padding, content should manage its own */
+    flex-grow: 1;
+    background-color: #c0c0c0; /* Match window background */
+    overflow: hidden; /* Hide overflow by default */
+}
+
+.button-container {
+    text-align: center; /* Center buttons */
+    margin-top: 15px;
+    padding: 10px; /* Add padding if body has none */
+}
+
+/* Standard Button Bevel */
+.win31-button {
+    background-color: #c0c0c0;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid #000000;
+    border-right: 1px solid #000000;
+    box-shadow: inset 1px 1px 0px #808080; /* Inner dark shadow */
+    padding: 4px 12px; /* Adjusted padding */
+    min-width: 70px;
+    cursor: default;
+    font-family: inherit; /* Use body font */
+    font-size: 12px;
+}
+
+.win31-button:active {
+    border-top-color: #000000;
+    border-left-color: #000000;
+    border-bottom-color: #ffffff;
+    border-right-color: #ffffff;
+    box-shadow: none;
+    background-color: #e0e0e0; /* Slightly lighter grey when pressed */
+    padding: 5px 11px 3px 13px; /* Shift text slightly */
+}
+
+/* Desktop Icon Styles */
+.desktop-icon {
+    position: absolute;
+    width: 70px;
+    text-align: center;
+    color: black; /* Updated to black text */
+    cursor: default;
+    padding: 5px;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.desktop-icon .icon-image {
+    width: 32px;
+    height: 32px;
+    background-color: #808080; /* Placeholder background */
+    border: 1px solid white;
+    margin: 0 auto 5px auto;
+    display: flex; /* For centering placeholder text */
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.desktop-icon span {
+    display: block;
+    background-color: transparent; /* Updated to transparent background */
+    color: black; /* Updated to black text */
+    font-size: 11px;
+    text-align: center;
+    padding: 1px 3px;
+}
+
+/* Icons within Group Windows */
+.group-window-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start; /* Align items to the top */
+    padding: 10px;
+    gap: 15px; /* Spacing between icons */
+    overflow-y: auto; /* Allow scrolling if many icons */
+    background-color: #ffffff; /* Set background to white */
+}
+
+.group-window-body .desktop-icon {
+    position: static; /* Override absolute positioning */
+    color: black; /* Icons inside windows usually had black text */
+    width: 60px; /* Slightly smaller icons in groups */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 5px;
+    cursor: default;
+    user-select: none;
+}
+
+.group-window-body .desktop-icon .icon-image {
+    width: 32px;
+    height: 32px;
+    background-color: transparent; /* Placeholder background */
+    border: none; /* Remove border */
+    margin: 0;
+    display: flex; /* For centering placeholder text/image */
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+/* Style for img icons */
+.group-window-body .desktop-icon .icon-image img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    image-rendering: pixelated; /* Keep icons crisp */
+}
+
+.group-window-body .desktop-icon span {
+    display: block;
+    background-color: transparent; /* Text background matches window */
+    color: black;
+    font-size: 11px;
+    text-align: center;
+    padding: 1px 3px;
+}
+
+/* Menu Bar Styles */
+.menu-bar {
+    background-color: #c0c0c0; /* Same as window background */
+    padding: 1px 2px; /* Small padding */
+    display: flex;
+    height: 18px; /* Adjusted height */
+    border-bottom: 1px solid #808080; /* Separator line */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.menu-item {
+    padding: 2px 6px; /* Adjusted padding */
+    font-size: 12px;
+    position: relative; /* For positioning the dropdown */
+    cursor: default;
+    user-select: none;
+    color: black;
+}
+
+.menu-item:hover {
+    background-color: #000080; /* Highlight on hover */
+    color: white;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%; /* Position below the menu item */
+    left: 0;
+    background-color: #c0c0c0;
+    /* Beveled border */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid #000000;
+    border-right: 1px solid #000000;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    min-width: 120px;
+    z-index: 120; /* Above window content */
+    padding: 2px; /* Padding around items */
+}
+
+.dropdown-menu.hidden {
+    display: none;
+}
+
+.dropdown-menu div {
+    padding: 2px 10px 2px 20px; /* Adjusted padding */
+    font-size: 12px;
+    white-space: nowrap;
+    color: black;
+}
+
+.dropdown-menu div:hover {
+    background-color: #000080;
+    color: white;
+}
+
+.dropdown-menu div.separator {
+    height: 0px;
+    border-top: 1px solid #808080;
+    border-bottom: 1px solid #ffffff;
+    padding: 0;
+    margin: 3px 2px;
+}
+
+/* Paint Toolbar Styles */
+.paint-toolbar {
+    background-color: #c0c0c0;
+    padding: 2px;
+    border-bottom: 1px solid #808080;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.paint-toolbar button {
+    /* Apply bevel */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid #000000;
+    border-right: 1px solid #000000;
+    min-width: 22px;
+    height: 22px;
+    padding: 2px;
+    cursor: default;
+    font-size: 10px;
+    background-color: #c0c0c0;
+}
+
+.paint-toolbar button:active {
+    border-top-color: #000000;
+    border-left-color: #000000;
+    border-bottom-color: #ffffff;
+    border-right-color: #ffffff;
+    background-color: #e0e0e0;
+}
+
+.paint-toolbar button[data-color] {
+    width: 22px;
+    font-size: 0; /* Hide text if color swatch */
+}
+
+.paint-toolbar .eraser-button {
+    /* Eraser might have specific icon/style */
+}
+
+.paint-toolbar .separator {
+    width: 0px;
+    height: 18px;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    margin: 0 4px;
+}
+
+.paint-canvas {
+    background-color: #ffffff;
+    display: block; /* Prevent extra space below canvas */
+    flex-grow: 1; /* Allow canvas to fill space */
+    width: 100%; /* Take full width */
+    height: auto; /* Adjust height based on container */
+}
+
+/* Notepad Styles */
+.notepad-textarea {
+    width: 100%;
+    height: 100%; /* Fill the window body */
+    box-sizing: border-box; 
+    border: 1px inset #808080; /* Inset border */
+    font-family: "Courier New", monospace; 
+    font-size: 13px;
+    resize: none; 
+    padding: 2px;
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+}
+
+/* Minesweeper Styles */
+.minesweeper-game {
+    padding: 5px;
+}
+
+.minesweeper-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    background-color: #c0c0c0;
+    padding: 3px;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-bottom: 1px solid #ffffff;
+    border-right: 1px solid #ffffff;
+}
+
+.minesweeper-controls .win31-button {
+    padding: 2px 8px;
+}
+
+.minesweeper-controls span {
+    background-color: black;
+    color: red;
+    font-family: monospace;
+    padding: 1px 3px;
+    border: 1px inset #808080;
+}
+
+.minesweeper-grid {
+    display: grid;
+    /* Grid columns will be set by JS */
+    border-top: 1px solid #808080; /* Dark top */
+    border-left: 1px solid #808080; /* Dark left */
+    border-bottom: 1px solid #ffffff; /* Light bottom */
+    border-right: 1px solid #ffffff; /* Light right */
+    background-color: #c0c0c0;
+    padding: 2px; /* Space for inner bevel */
+}
+
+.mine-cell {
+    width: 16px; /* Smaller cells */
+    height: 16px;
+    /* Raised bevel */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid #808080;
+    border-right: 1px solid #808080;
+    background-color: #c0c0c0; /* Default cell color */
+    text-align: center;
+    line-height: 16px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: default;
+    user-select: none;
+    position: relative; /* For potential overlays */
+}
+
+.mine-cell.revealed {
+    border: 1px solid #b0b0b0; /* Flatter border when revealed */
+    background-color: #c0c0c0; /* Still grey */
+    border-top-color: #b0b0b0;
+    border-left-color: #b0b0b0;
+}
+
+.mine-cell.mine {
+    background-color: red; /* Show mine on loss */
+    color: black;
+    background-image: url('data:image/gif;base64,R0lGODlhEAAQAMQAAORB/4CAgAAAAP///8DAwHZ2djAwMAAAAAAAACH5BAkKAAQALAAAAAAQABAAAAVWICWOZGme1kM4nL9hSIgoiKCbbKKLKqysrtfG53/AcaeWZmucbfu+dycIg8ZkGi0Ki8YkMrlMltNpvdZoPO5fMZs/h8/otHrNnsvmfD6f0+kCADs='); /* Simple mine icon */
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.mine-cell.flagged::before {
+    content: "►"; /* Flag symbol (Marlett font often used 'P') */
+    font-family: "Marlett", "System", sans-serif;
+    color: red;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    line-height: 16px;
+    font-size: 14px;
+}
+
+/* Number colors */
+.mine-cell[data-count="1"] { color: blue; }
+.mine-cell[data-count="2"] { color: green; }
+.mine-cell[data-count="3"] { color: red; }
+.mine-cell[data-count="4"] { color: #000080; } /* Dark Blue */
+.mine-cell[data-count="5"] { color: #800000; } /* Maroon */
+.mine-cell[data-count="6"] { color: #008080; } /* Teal */
+.mine-cell[data-count="7"] { color: black; }
+.mine-cell[data-count="8"] { color: grey; }
+
+/* Resize Handle Styles */
+.resizer {
+    position: absolute;
+    background: transparent; /* Handles are invisible */
+    z-index: 10; /* Above window body but below potential dropdowns */
+}
+
+.resizer-t {
+    top: -3px;
+    left: 5px;
+    right: 5px;
+    height: 6px;
+    cursor: ns-resize;
+}
+
+.resizer-b {
+    bottom: -3px;
+    left: 5px;
+    right: 5px;
+    height: 6px;
+    cursor: ns-resize;
+}
+
+.resizer-l {
+    top: 5px;
+    bottom: 5px;
+    left: -3px;
+    width: 6px;
+    cursor: ew-resize;
+}
+
+.resizer-r {
+    top: 5px;
+    bottom: 5px;
+    right: -3px;
+    width: 6px;
+    cursor: ew-resize;
+}
+
+.resizer-tl {
+    top: -3px;
+    left: -3px;
+    width: 8px;
+    height: 8px;
+    cursor: nwse-resize;
+}
+
+.resizer-tr {
+    top: -3px;
+    right: -3px;
+    width: 8px;
+    height: 8px;
+    cursor: nesw-resize;
+}
+
+.resizer-bl {
+    bottom: -3px;
+    left: -3px;
+    width: 8px;
+    height: 8px;
+    cursor: nesw-resize;
+}
+
+.resizer-br {
+    bottom: -3px;
+    right: -3px;
+    width: 8px;
+    height: 8px;
+    cursor: nwse-resize;
+}
+
+/* Scrollbar Styling (Basic) */
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background: #c0c0c0; /* Scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0; /* Thumb background */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid #000000;
+    border-right: 1px solid #000000;
+}
+
+::-webkit-scrollbar-button {
+    background-color: #c0c0c0;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid #000000;
+    border-right: 1px solid #000000;
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+::-webkit-scrollbar-button:active {
+    border-top-color: #000000;
+    border-left-color: #000000;
+    border-bottom-color: #ffffff;
+    border-right-color: #ffffff;
+}
+
+/* Add basic arrow symbols - might need better approach */
+::-webkit-scrollbar-button:vertical:decrement { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="8,4 12,12 4,12"/></svg>'); }
+::-webkit-scrollbar-button:vertical:increment { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="8,12 12,4 4,4"/></svg>'); }
+::-webkit-scrollbar-button:horizontal:decrement { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="12,8 4,12 4,4"/></svg>'); }
+::-webkit-scrollbar-button:horizontal:increment { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="4,8 12,12 12,4"/></svg>'); }
